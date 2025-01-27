@@ -3,6 +3,9 @@ using CodeMonkey.Utils;
 
 public class Grid
 {
+    public const int HEAT_MAP_MAX_VALUE = 100;
+    public const int HEAT_MAP_MIN_VALUE = 0;
+    
     private int _width;
     private int _height;
     private float _cellSize;
@@ -40,7 +43,13 @@ public class Grid
         Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
     }
 
-    private Vector3 GetWorldPosition(int x, int z)
+    public int GetWidth() => _width;
+    
+    public int GetHeight() => _height;
+    
+    public float GetCellSize() => _cellSize;
+    
+    public Vector3 GetWorldPosition(int x, int z)
     {
         return new Vector3(x, 0, z) * _cellSize + _originPosition;
     }
@@ -55,7 +64,7 @@ public class Grid
     {
         if (0 <= x && 0 <= z && x < _width && z < _height)
         {
-            _gridArray[x, z] = value;
+            _gridArray[x, z] = Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE);
             _valueTextArray[x, z].text = _gridArray[x, z].ToString();
         }
     }
