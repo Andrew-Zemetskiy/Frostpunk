@@ -28,6 +28,8 @@ public class Test_GridSystem : MonoBehaviour
             if (gridCellData != null)
             {
                 gridCellData.AddValue(5);
+                _grid.SetGridObject(hitPoint,gridCellData );
+                // _grid.OnGridObjectChanged(gridCellData);
             }
 
             // _grid.SetValue(hitPoint, value + 1);
