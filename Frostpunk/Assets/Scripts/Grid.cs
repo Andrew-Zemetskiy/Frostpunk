@@ -1,54 +1,72 @@
+using System;
 using UnityEngine;
 using CodeMonkey.Utils;
 
-public class Grid
+public class Grid<TGridObject>
 {
-    public const int HEAT_MAP_MAX_VALUE = 100;
-    public const int HEAT_MAP_MIN_VALUE = 0;
-    
+    public event EventHandler<OnGridObjectChangedEventArgs> OnGridObjectChanged;
+
+    public class OnGridObjectChangedEventArgs : EventArgs
+    {
+        public int x;
+        public int z;
+    }
+
     private int _width;
     private int _height;
     private float _cellSize;
     private Vector3 _originPosition;
-    private int[,] _gridArray;
+    private TGridObject[,] _gridArray;
     private TextMesh[,] _valueTextArray;
 
-    public Grid(int width, int height, float cellSize, Vector3 originPosition)
+    public Grid(int width, int height, float cellSize, Vector3 originPosition, Func<Grid<TGridObject>, int, int ,TGridObject> createGridObject)
     {
         _width = width;
         _height = height;
         _cellSize = cellSize;
         _originPosition = originPosition;
 
-        _gridArray = new int[_width, _height];
+        _gridArray = new TGridObject[_width, _height];
         _valueTextArray = new TextMesh[_width, _height];
 
         for (int x = 0; x < _gridArray.GetLength(0); x++)
         {
-            for (int y = 0; y < _gridArray.GetLength(1); y++)
+            for (int z = 0; z < _gridArray.GetLength(1); z++)
             {
-                var text = UtilsClass.CreateWorldText(_gridArray[x, y].ToString(), null,
-                    GetWorldPosition(x, y) + new Vector3(cellSize, 0, cellSize) * .5f, 20,
-                    Color.white, TextAnchor.MiddleCenter);
-
-                text.transform.eulerAngles = new Vector3(90f, 0f, 0f);
-                _valueTextArray[x, y] = text;
-
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x, y + 1), Color.white, 100f);
-                Debug.DrawLine(GetWorldPosition(x, y), GetWorldPosition(x + 1, y), Color.white, 100f);
+                _gridArray[x, z] = createGridObject(this, x, z);
             }
         }
 
-        Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
-        Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+        bool showGrid = true;
+        if (showGrid)
+        {
+            for (int x = 0; x < _gridArray.GetLength(0); x++)
+            {
+                for (int z = 0; z < _gridArray.GetLength(1); z++)
+                {
+                    var text = UtilsClass.CreateWorldText(_gridArray[x, z]?.ToString(), null,
+                        GetWorldPosition(x, z) + new Vector3(cellSize, 0, cellSize) * .5f, 20,
+                        Color.white, TextAnchor.MiddleCenter);
+
+                    text.transform.eulerAngles = new Vector3(90f, 0f, 0f);
+                    _valueTextArray[x, z] = text;
+
+                    Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x, z + 1), Color.white, 100f);
+                    Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x + 1, z), Color.white, 100f);
+                }
+            }
+
+            Debug.DrawLine(GetWorldPosition(0, height), GetWorldPosition(width, height), Color.white, 100f);
+            Debug.DrawLine(GetWorldPosition(width, 0), GetWorldPosition(width, height), Color.white, 100f);
+        }
     }
 
     public int GetWidth() => _width;
-    
+
     public int GetHeight() => _height;
-    
+
     public float GetCellSize() => _cellSize;
-    
+
     public Vector3 GetWorldPosition(int x, int z)
     {
         return new Vector3(x, 0, z) * _cellSize + _originPosition;
@@ -60,23 +78,29 @@ public class Grid
         z = Mathf.FloorToInt((worldPosition - _originPosition).z / _cellSize);
     }
 
-    public void SetValue(int x, int z, int value)
+    public void SetGridObject(int x, int z, TGridObject value)
     {
         if (0 <= x && 0 <= z && x < _width && z < _height)
         {
-            _gridArray[x, z] = Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE);
-            _valueTextArray[x, z].text = _gridArray[x, z].ToString();
+            _gridArray[x, z] = value; //Mathf.Clamp(value, HEAT_MAP_MIN_VALUE, HEAT_MAP_MAX_VALUE)
+            TriggerGridObjectChanged(x, z);
+            _valueTextArray[x, z].text = _gridArray[x, z]?.ToString();
         }
     }
 
-    public void SetValue(Vector3 worldPosition, int value)
+    public void TriggerGridObjectChanged(int x, int z)
+    {
+        if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, z = z });
+    }
+
+    public void SetGridObject(Vector3 worldPosition, TGridObject value)
     {
         int x, z;
         GetXZ(worldPosition, out x, out z);
-        SetValue(x, z, value);
+        SetGridObject(x, z, value);
     }
 
-    public int GetValue(int x, int z)
+    public TGridObject GetGridObject(int x, int z)
     {
         if (0 <= x && 0 <= z && x < _width && z < _height)
         {
@@ -84,14 +108,14 @@ public class Grid
         }
         else
         {
-            return 0;
+            return default;
         }
     }
 
-    public int GetValue(Vector3 worldPosition)
+    public TGridObject GetGridObject(Vector3 worldPosition)
     {
         int x, z;
         GetXZ(worldPosition, out x, out z);
-        return GetValue(x, z);
+        return GetGridObject(x, z);
     }
 }
