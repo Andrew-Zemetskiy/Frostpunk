@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nameString: Warehouse
   prefab: {fileID: 7244877889675768535, guid: db4d3c4ea56ecbd44a925b642a961b78, type: 3}
-  visual: {fileID: 0}
+  visual: {fileID: 9009951366487070072, guid: b8c72c9dccdb4844ea94d0f7337761e2, type: 3}
   sprite: {fileID: 21300000, guid: 055c9034aa92266458780d37def8f797, type: 3}
   width: 2
   height: 2

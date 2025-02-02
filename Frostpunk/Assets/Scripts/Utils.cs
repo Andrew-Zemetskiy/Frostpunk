@@ -16,35 +16,27 @@ public static class Utils
         return Vector3.zero;
     }
     
-    public static void AddQuad(Vector3[] vertices, Vector2[] uvs, int[] triangles, int index, Vector3 GridPos, Vector3 QuadSize, Vector2 Uv)
-    {
-        vertices[index * 4] = new Vector3((-0.5f + GridPos.x) * QuadSize.x, (-0.5f + GridPos.z) * QuadSize.z);
-        vertices[(index * 4) + 1] = new Vector3((-0.5f + GridPos.x) * QuadSize.x, (+0.5f + GridPos.z) * QuadSize.z);
-        vertices[(index * 4) + 2] = new Vector3((+0.5f + GridPos.x) * QuadSize.x, (+0.5f + GridPos.z) * QuadSize.z);
-        vertices[(index * 4) + 3] = new Vector3((+0.5f + GridPos.x) * QuadSize.x, (-0.5f + GridPos.z) * QuadSize.z);
-
-        Debug.Log(vertices[0]);
-        Debug.Log(vertices[1]);
-        Debug.Log(vertices[2]);
-        Debug.Log(vertices[3]);
-
-        uvs[(index * 4)] = Uv;
-        uvs[(index * 4) + 1] = Uv;
-        uvs[(index * 4) + 2] = Uv;
-        uvs[(index * 4) + 3] = Uv;
-
-        triangles[(index * 6) + 0] = (index * 4) + 0;
-        triangles[(index * 6) + 1] = (index * 4) + 1;
-        triangles[(index * 6) + 2] = (index * 4) + 2;
-        triangles[(index * 6) + 3] = (index * 4) + 2;
-        triangles[(index * 6) + 4] = (index * 4) + 3;
-        triangles[(index * 6) + 5] = (index * 4) + 0;
-    }
+    public const int sortingOrderDefault = 5000;
     
-    public static void CreateEmptyMeshArrays(int quadCount, out Vector3[] vertices, out Vector2[] uvs, out int[] triangles)
-    {
-        vertices = new Vector3[quadCount * 4];
-        uvs = new Vector2[quadCount * 4];
-        triangles = new int[quadCount * 6];
+    // Create Text in the World
+    public static TextMesh CreateWorldText(string text, Transform parent = null, Vector3 localPosition = default(Vector3), int fontSize = 40, Color? color = null, TextAnchor textAnchor = TextAnchor.UpperLeft, TextAlignment textAlignment = TextAlignment.Left, int sortingOrder = sortingOrderDefault) {
+        if (color == null) color = Color.white;
+        return CreateWorldText(parent, text, localPosition, fontSize, (Color)color, textAnchor, textAlignment, sortingOrder);
+    }
+        
+    // Create Text in the World
+    public static TextMesh CreateWorldText(Transform parent, string text, Vector3 localPosition, int fontSize, Color color, TextAnchor textAnchor, TextAlignment textAlignment, int sortingOrder) {
+        GameObject gameObject = new GameObject("World_Text", typeof(TextMesh));
+        Transform transform = gameObject.transform;
+        transform.SetParent(parent, false);
+        transform.localPosition = localPosition;
+        TextMesh textMesh = gameObject.GetComponent<TextMesh>();
+        textMesh.anchor = textAnchor;
+        textMesh.alignment = textAlignment;
+        textMesh.text = text;
+        textMesh.fontSize = fontSize;
+        textMesh.color = color;
+        textMesh.GetComponent<MeshRenderer>().sortingOrder = sortingOrder;
+        return textMesh;
     }
 }
