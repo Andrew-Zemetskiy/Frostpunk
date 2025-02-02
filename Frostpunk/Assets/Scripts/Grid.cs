@@ -91,6 +91,12 @@ public class Grid<TGridObject>
     public void TriggerGridObjectChanged(int x, int z)
     {
         if (OnGridObjectChanged != null) OnGridObjectChanged(this, new OnGridObjectChangedEventArgs { x = x, z = z });
+        UpdateGridText(x, z);
+    }
+
+    private void UpdateGridText(int x, int z)
+    {
+        _valueTextArray[x, z].text = _gridArray[x, z]?.ToString();
     }
 
     public void SetGridObject(Vector3 worldPosition, TGridObject value)

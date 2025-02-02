@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4204574493501600159}
   m_Layer: 0
-  m_Name: BuildingWithArea
+  m_Name: HouseWithArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
