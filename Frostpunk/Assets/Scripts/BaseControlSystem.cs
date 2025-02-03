@@ -8,7 +8,9 @@ public class BaseControlSystem : MonoBehaviour
 {
     public static BaseControlSystem Instance;
     
+    [Header("Residents")]
     [SerializeField] private List<NavMeshAgent> _navMeshAgentList;
+    [Header("Buildings")]
     [SerializeField] private List<Building> _buildingList;
     
     private InputSystem _inputSystem;
