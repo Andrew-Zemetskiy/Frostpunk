@@ -384,6 +384,8 @@ MonoBehaviour:
   - {fileID: 1800737073}
   - {fileID: 1703409523}
   _resourceUI: {fileID: 2123777397}
+  _graphicRaycaster: {fileID: 436516659}
+  _eventSystem: {fileID: 1313443680}
 --- !u!4 &314585305
 Transform:
   m_ObjectHideFlags: 0
@@ -779,7 +781,7 @@ GameObject:
   - component: {fileID: 436516660}
   - component: {fileID: 436516659}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

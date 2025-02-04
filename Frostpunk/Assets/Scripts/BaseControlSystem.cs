@@ -1,8 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class BaseControlSystem : MonoBehaviour
 {
@@ -10,7 +11,7 @@ public class BaseControlSystem : MonoBehaviour
 
     [Header("Residents")] [SerializeField] private List<NavMeshAgent> _navMeshAgentList;
     [Header("Buildings")] [SerializeField] private List<Building> _buildingList;
-
+    
     [Header("UI")] [SerializeField] private GameObject _resourceUI;
 
     private InputSystem _inputSystem;
@@ -18,6 +19,8 @@ public class BaseControlSystem : MonoBehaviour
     private float _baseSpeed;
 
     //For UI
+    [SerializeField] private GraphicRaycaster _graphicRaycaster;
+    [SerializeField] private EventSystem _eventSystem;
     private bool isResourceUIActive = false;
 
     private void Awake()
@@ -45,10 +48,17 @@ public class BaseControlSystem : MonoBehaviour
 
     private void OnMouseClick(InputAction.CallbackContext obj)
     {
+        // Is click on UI
+        if (IsPointerOverUI())
+        {
+            Debug.Log("Clicked on UI, ignoring raycast.");
+            return;
+        }
+        
         Ray ray = _camera.ScreenPointToRay(Mouse.current.position.value);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.TryGetComponent<Building>(out Building building))
+            if (hit.collider.TryGetComponent(out Building building))
             {
                 Debug.Log(building.BuildingName);
                 if (isResourceUIActive == false)
@@ -75,6 +85,18 @@ public class BaseControlSystem : MonoBehaviour
     }
 
     //UI
+    private bool IsPointerOverUI()
+    {
+        PointerEventData eventData = new PointerEventData(_eventSystem)
+        {
+            position = Mouse.current.position.value
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        _graphicRaycaster.Raycast(eventData, results);
+        return results.Count > 0;
+    }
+    
     private void SetEnableToGO(GameObject target, bool isEnable)
     {
         target.SetActive(isEnable);
