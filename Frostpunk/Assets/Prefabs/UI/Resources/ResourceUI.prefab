@@ -194,14 +194,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0.9928825, b: 1, a: 1}
+  m_Color: {r: 0.5924529, g: 0.5924529, b: 0.5924529, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 055c9034aa92266458780d37def8f797, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 274128bd6d098164b84c30685826d682, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -220,7 +220,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5433841703542026585}
-  - component: {fileID: 7662111918893263350}
   m_Layer: 5
   m_Name: ResourceUI
   m_TagString: Untagged
@@ -249,18 +248,6 @@ RectTransform:
   m_AnchoredPosition: {x: 637.2096, y: 3.8932}
   m_SizeDelta: {x: 525.8619, y: 944.8621}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7662111918893263350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3166253783558321982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eb58406103c7a484bae58e3f7590c9c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &5685002748957365654
 GameObject:
   m_ObjectHideFlags: 0

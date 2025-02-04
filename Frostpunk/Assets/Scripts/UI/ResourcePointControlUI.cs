@@ -1,16 +1,32 @@
+using System;
 using UnityEngine;
 
-public class ResourcePointControlUI : MonoBehaviour
+public class ResourcePointControlUI : UIHandlerBase, IInit
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [SerializeField] private GameObject _resourcePointUI;
+
+    private ExtractionStructure _structureBase;
+    
+    public override void Init()
     {
-        
+        BaseControlSystem.Instance.OnObjectSelected += OnObjectSelected;
+        BaseControlSystem.Instance.OnObjectDeselected += OnObjectDeselected;
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnDestroy()
     {
-        
+        BaseControlSystem.Instance.OnObjectSelected -= OnObjectSelected;
+        BaseControlSystem.Instance.OnObjectDeselected -= OnObjectDeselected;
+    }
+
+    private void OnObjectSelected(ExtractionStructure structure)
+    {
+        structure.PrintHehe();
+        _resourcePointUI.SetActive(true);
+    }
+    
+    private void OnObjectDeselected()
+    {
+        _resourcePointUI.SetActive(false);
     }
 }

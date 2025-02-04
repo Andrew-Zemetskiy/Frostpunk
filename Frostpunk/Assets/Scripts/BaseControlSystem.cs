@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -9,10 +10,14 @@ public class BaseControlSystem : MonoBehaviour
 {
     public static BaseControlSystem Instance;
 
+    public event Action<ExtractionStructure> OnObjectSelected;
+    public event Action OnObjectDeselected;
+
     [Header("Residents")] [SerializeField] private List<NavMeshAgent> _navMeshAgentList;
     [Header("Buildings")] [SerializeField] private List<Building> _buildingList;
-    
-    [Header("UI")] [SerializeField] private GameObject _resourceUI;
+
+    [Header("ExtractionPointsConfigs")] [SerializeField]
+    private List<ResourceExtractionStructuresSO> _extractionStructuresConfigsList;
 
     private InputSystem _inputSystem;
     private Camera _camera;
@@ -54,24 +59,36 @@ public class BaseControlSystem : MonoBehaviour
             Debug.Log("Clicked on UI, ignoring raycast.");
             return;
         }
-        
+
+        //Select building
         Ray ray = _camera.ScreenPointToRay(Mouse.current.position.value);
         if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.TryGetComponent(out Building building))
+            if (hit.collider.TryGetComponent(out SelectableStructureBase structure))
             {
-                Debug.Log(building.BuildingName);
-                if (isResourceUIActive == false)
+                object inheritor = ObjectClarification(structure);
+                if (inheritor != null)
                 {
-                    SetEnableToGO(_resourceUI, true);
+                    if (isResourceUIActive == false)
+                    {
+                        SetEnableToGO(true, (ExtractionStructure)inheritor);
+                    }
                 }
             }
             else if (isResourceUIActive == true)
             {
-                SetEnableToGO(_resourceUI, false);
+                SetEnableToGO(false);
             }
-            
         }
+    }
+
+    private object ObjectClarification(SelectableStructureBase structure)
+    {
+        if (structure is ExtractionStructure extractionStructure)
+        {
+            return extractionStructure;
+        }
+        return null;
     }
 
     public void SentResidentToObject(int residentId, int buildingId)
@@ -96,10 +113,18 @@ public class BaseControlSystem : MonoBehaviour
         _graphicRaycaster.Raycast(eventData, results);
         return results.Count > 0;
     }
-    
-    private void SetEnableToGO(GameObject target, bool isEnable)
+
+    private void SetEnableToGO(bool isEnable, ExtractionStructure structure = default)
     {
-        target.SetActive(isEnable);
+        if (isEnable)
+        {
+            OnObjectSelected?.Invoke(structure);
+        }
+        else
+        {
+            OnObjectDeselected?.Invoke();
+        }
+
         isResourceUIActive = isEnable;
     }
 }
