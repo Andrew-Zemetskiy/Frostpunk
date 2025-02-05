@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+
 public class BaseControlSystem : MonoBehaviour
 {
     public static BaseControlSystem Instance;
@@ -79,10 +80,7 @@ public class BaseControlSystem : MonoBehaviour
                 object inheritor = ObjectClarification(structure);
                 if (inheritor != null)
                 {
-                    if (isResourceUIActive == false)
-                    {
-                        SetEnableToGO(true, (ExtractionStructure)inheritor);
-                    }
+                    SetEnableToGO(true, (ExtractionStructure)inheritor);
                 }
             }
             else if (isResourceUIActive == true)
@@ -100,7 +98,7 @@ public class BaseControlSystem : MonoBehaviour
         }
         return null;
     }
-
+    
     private void FillResidentsDictionary()
     {
         foreach (var resident in _navMeshAgentList)
@@ -109,7 +107,6 @@ public class BaseControlSystem : MonoBehaviour
             _vacantResidentsDictionary.Add(_vacantResidentIndex, resident);
             _vacantResidentIndex += 1;
         }
-        Debug.Log(_allResidentsDictionary.Count);
     }
     
     public int GetRisedentsCount() => _allResidentsDictionary.Count;
@@ -121,7 +118,6 @@ public class BaseControlSystem : MonoBehaviour
         appointedWorkers = 0;
         if (amount == 0 || _vacantResidentsDictionary.Count == 0) return;
         
-        Debug.Log($"AppointWorkerToMining. Before. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workers.Count} ");
         while (appointedWorkers < amount && _vacantResidentsDictionary.Count > 0)
         {
             var firstVacantResident = _vacantResidentsDictionary.First();
@@ -131,7 +127,6 @@ public class BaseControlSystem : MonoBehaviour
             SentResidentToObject(firstVacantResident.Value, target);
             appointedWorkers += 1;
         }
-        Debug.Log($"AppointWorkerToMining. After. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workers.Count} \n");
     }
 
     public void RemoveWorkersFromProduction(ref Dictionary<int, NavMeshAgent> workersDictionary, int amount, out int removedWorkers)
@@ -139,7 +134,6 @@ public class BaseControlSystem : MonoBehaviour
         removedWorkers = 0;
         if (amount == 0 || workersDictionary.Count == 0) return;
         
-        Debug.Log($"RemoveWorkerFromMining. Before. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workersDictionary.Count} ");
         while (removedWorkers < amount && workersDictionary.Count > 0)
         {
             var firstWorker = workersDictionary.First();
@@ -149,7 +143,6 @@ public class BaseControlSystem : MonoBehaviour
             SentResidentToObject(firstWorker.Value, _freeZone);
             removedWorkers += 1;
         }
-        Debug.Log($"RemoveWorkerFromMining. After. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workersDictionary.Count} \n");
     }
     
     private void SentResidentToObject(NavMeshAgent resident, Transform targetObject)
