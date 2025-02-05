@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -13,7 +14,15 @@ public class BaseControlSystem : MonoBehaviour
     public event Action<ExtractionStructure> OnObjectSelected;
     public event Action OnObjectDeselected;
 
-    [Header("Residents")] [SerializeField] private List<NavMeshAgent> _navMeshAgentList;
+    [Header("Residents")] 
+    [SerializeField] private List<NavMeshAgent> _navMeshAgentList; //on object pool will be deleted 
+
+    [SerializeField] private Transform _freeZone;
+    private Dictionary<int, NavMeshAgent> _allResidentsDictionary = new Dictionary<int, NavMeshAgent>();
+    private Dictionary<int, NavMeshAgent> _vacantResidentsDictionary = new Dictionary<int, NavMeshAgent>();
+    private int _vacantResidentIndex = 0;
+    
+    
     [Header("Buildings")] [SerializeField] private List<Building> _buildingList;
 
     [Header("ExtractionPointsConfigs")] [SerializeField]
@@ -37,6 +46,7 @@ public class BaseControlSystem : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
+        FillResidentsDictionary();
     }
 
     private void OnEnable()
@@ -56,7 +66,7 @@ public class BaseControlSystem : MonoBehaviour
         // Is click on UI
         if (IsPointerOverUI())
         {
-            Debug.Log("Clicked on UI, ignoring raycast.");
+            // Debug.Log("Clicked on UI, ignoring raycast.");
             return;
         }
 
@@ -91,14 +101,60 @@ public class BaseControlSystem : MonoBehaviour
         return null;
     }
 
-    public void SentResidentToObject(int residentId, int buildingId)
+    private void FillResidentsDictionary()
     {
-        if (buildingId < 0) return;
-
-        if (residentId < _navMeshAgentList.Count)
+        foreach (var resident in _navMeshAgentList)
         {
-            _navMeshAgentList[residentId].SetDestination(_buildingList[buildingId].TargetPoint.position);
+            _allResidentsDictionary.Add(_vacantResidentIndex, resident);
+            _vacantResidentsDictionary.Add(_vacantResidentIndex, resident);
+            _vacantResidentIndex += 1;
         }
+        Debug.Log(_allResidentsDictionary.Count);
+    }
+    
+    public int GetRisedentsCount() => _allResidentsDictionary.Count;
+    
+    public int GetVacantsCount() => _vacantResidentsDictionary.Count;
+
+    public void AppointWorkersToMining(ref Dictionary<int, NavMeshAgent> workers, int amount, out int appointedWorkers, Transform target)
+    {
+        appointedWorkers = 0;
+        if (amount == 0 || _vacantResidentsDictionary.Count == 0) return;
+        
+        Debug.Log($"AppointWorkerToMining. Before. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workers.Count} ");
+        while (appointedWorkers < amount && _vacantResidentsDictionary.Count > 0)
+        {
+            var firstVacantResident = _vacantResidentsDictionary.First();
+            workers.Add(firstVacantResident.Key, firstVacantResident.Value);
+            _vacantResidentsDictionary.Remove(firstVacantResident.Key);
+            
+            SentResidentToObject(firstVacantResident.Value, target);
+            appointedWorkers += 1;
+        }
+        Debug.Log($"AppointWorkerToMining. After. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workers.Count} \n");
+    }
+
+    public void RemoveWorkersFromProduction(ref Dictionary<int, NavMeshAgent> workersDictionary, int amount, out int removedWorkers)
+    {
+        removedWorkers = 0;
+        if (amount == 0 || workersDictionary.Count == 0) return;
+        
+        Debug.Log($"RemoveWorkerFromMining. Before. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workersDictionary.Count} ");
+        while (removedWorkers < amount && workersDictionary.Count > 0)
+        {
+            var firstWorker = workersDictionary.First();
+            _vacantResidentsDictionary.Add(firstWorker.Key, firstWorker.Value);
+            workersDictionary.Remove(firstWorker.Key);
+
+            SentResidentToObject(firstWorker.Value, _freeZone);
+            removedWorkers += 1;
+        }
+        Debug.Log($"RemoveWorkerFromMining. After. vacantDictionary: {_vacantResidentsDictionary.Count}; workersDictionary: {workersDictionary.Count} \n");
+    }
+    
+    private void SentResidentToObject(NavMeshAgent resident, Transform targetObject)
+    {
+        resident.SetDestination(targetObject.position);
     }
 
     //UI

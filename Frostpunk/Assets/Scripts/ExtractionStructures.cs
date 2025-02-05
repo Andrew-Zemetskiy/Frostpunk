@@ -1,7 +1,11 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class ExtractionStructure : SelectableStructureBase
 {
+    private Dictionary<int, NavMeshAgent> _workersDictionary = new Dictionary<int, NavMeshAgent>();
+    
     public ResourceExtractionStructuresSO structureConfig;
 
     private float _resourceAmount;
@@ -22,7 +26,8 @@ public class ExtractionStructure : SelectableStructureBase
     public int CurrentWorkersAmount
     {
         get => _currentWorkersAmount;
-        set => _currentWorkersAmount = Mathf.Clamp(value, 0, structureConfig.peopleCapacity);
+        private set => _currentWorkersAmount = value;
+        //Mathf.Clamp(value, 0, structureConfig.peopleCapacity);
     }
 
     private void Awake()
@@ -34,5 +39,23 @@ public class ExtractionStructure : SelectableStructureBase
     {
         _resourceAmount = Random.Range(structureConfig.minResourceAmount, structureConfig.maxResourceAmount);
         _miningSpeedPerPerson = structureConfig.miningSpeedPerPerson;
+    }
+
+    public void AddWorkers(int amount)
+    {
+        if (CurrentWorkersAmount + amount <= structureConfig.peopleCapacity)
+        {
+            BaseControlSystem.Instance.AppointWorkersToMining(ref _workersDictionary, amount, out int appointedWorkers, transform);
+            CurrentWorkersAmount += appointedWorkers;
+        }
+    }
+
+    public void RemoveWorkers(int amount)
+    {
+        if (CurrentWorkersAmount - amount >= 0)
+        {
+            BaseControlSystem.Instance.RemoveWorkersFromProduction(ref _workersDictionary, amount, out int removedWorkers);
+            CurrentWorkersAmount -= removedWorkers;
+        }
     }
 }

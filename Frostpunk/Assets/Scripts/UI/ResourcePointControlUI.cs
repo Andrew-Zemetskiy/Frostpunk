@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class ResourcePointControlUI : UIHandlerBase, IInit
@@ -23,6 +24,7 @@ public class ResourcePointControlUI : UIHandlerBase, IInit
     [SerializeField] private TextMeshProUGUI _resourceAmountText;
     [SerializeField] private TextMeshProUGUI _miningSpeedText;
     [SerializeField] private TextMeshProUGUI _peopleCapacityText;
+    [SerializeField] private TextMeshProUGUI _availableWorkersText;
 
     [Header("Buttons")] 
     [SerializeField] private Button _noneAmountBtn;
@@ -104,17 +106,18 @@ public class ResourcePointControlUI : UIHandlerBase, IInit
         _resourceAmountText.text = Mathf.CeilToInt(_structureBase.ResourceAmount).ToString();
         _miningSpeedText.text = MathF.Round(_miningSpeedPerPerson * _currentPeopleAmount, 1).ToString(CultureInfo.CurrentCulture) + " / h";
         _peopleCapacityText.text = $"{_currentPeopleAmount} / {_peopleCapacity}";
+        _availableWorkersText.text = $"{BaseControlSystem.Instance.GetVacantsCount()} available";
     }
 
     private void AddPeople(int amount)
     {
-        _structureBase.CurrentWorkersAmount += amount;
+        _structureBase.AddWorkers(amount);
         UpdateDynamicData();
     }
 
     private void RemovePeople(int amount)
     {
-        _structureBase.CurrentWorkersAmount -= amount;
+        _structureBase.RemoveWorkers(amount);
         UpdateDynamicData();
     }
 }
