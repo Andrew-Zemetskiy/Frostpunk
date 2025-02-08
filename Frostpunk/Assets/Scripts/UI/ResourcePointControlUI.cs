@@ -44,7 +44,8 @@ public class ResourcePointControlUI : UIHandlerBase, IInit
     {
         BaseControlSystem.Instance.OnObjectSelected += OnObjectSelected;
         BaseControlSystem.Instance.OnObjectDeselected += OnObjectDeselected;
-
+        InGameTimeManager.Instance.OnTimeStep += UpdateDynamicData;
+        
         InitButtons();
     }
 
@@ -52,6 +53,7 @@ public class ResourcePointControlUI : UIHandlerBase, IInit
     {
         BaseControlSystem.Instance.OnObjectSelected -= OnObjectSelected;
         BaseControlSystem.Instance.OnObjectDeselected -= OnObjectDeselected;
+        InGameTimeManager.Instance.OnTimeStep -= UpdateDynamicData;
         
         _noneAmountBtn.onClick.RemoveAllListeners();
         _maxAmountBtn.onClick.RemoveAllListeners();
@@ -99,6 +101,8 @@ public class ResourcePointControlUI : UIHandlerBase, IInit
 
     private void UpdateDynamicData()
     {
+        if (_resourcePointUI.activeSelf == false) return;
+        
         _currentPeopleAmount = _structureBase.CurrentWorkersAmount;
         
         _temperatureSlider.value = 0.5f; //Set clamp for next data of temperature
