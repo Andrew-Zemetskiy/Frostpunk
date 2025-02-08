@@ -362,6 +362,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1133189613}
     m_Modifications:
+    - target: {fileID: 81500629803571066, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a0447508f4edfab409eb09a9baf286b4, type: 2}
     - target: {fileID: 3053239195963619376, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
       propertyPath: m_text
       value: steel
@@ -1017,7 +1021,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9d217dbc52806c849a37826dca50dd00, type: 2}
+  - {fileID: 2100000, guid: 0cec32d7227591f43afaaa41f59e9436, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3168,6 +3172,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1133189613}
     m_Modifications:
+    - target: {fileID: 81500629803571066, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fb51a01945bebb14fb2249a6b8f7fe2a, type: 2}
     - target: {fileID: 3053239195963619376, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
       propertyPath: m_text
       value: coal
@@ -4227,6 +4235,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1133189613}
     m_Modifications:
+    - target: {fileID: 81500629803571066, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 26cc43c5a7995ee4b85e1d1355ad2594, type: 2}
     - target: {fileID: 3053239195963619376, guid: 5abde9b1bae06854fb96fa72121d5779, type: 3}
       propertyPath: m_text
       value: WOOD
