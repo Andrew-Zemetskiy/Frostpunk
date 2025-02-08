@@ -57,7 +57,7 @@ public class Grid<TGridObject>
                     text.transform.eulerAngles = new Vector3(90f, 0f, 0f);
                     
                     _textRenderers[x,z] = text.GetComponent<MeshRenderer>();
-                    if (!showGridText) _textRenderers[x,z].enabled = false; //hide text
+                    if (!_isTextShowing) _textRenderers[x,z].enabled = false; //hide text
                     _valueTextArray[x, z] = text;
 
                     Debug.DrawLine(GetWorldPosition(x, z), GetWorldPosition(x, z + 1), Color.white, 100f);

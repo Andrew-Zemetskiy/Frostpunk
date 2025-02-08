@@ -9,6 +9,11 @@ public class GridBuildingSystem : MonoBehaviour
     public event Action OnObjectPlaced;
     public event Action OnSelectedChanged;
 
+    [Header("Grid Size")] 
+    [SerializeField] private int _width = 10;
+    [SerializeField] private int _height = 5;
+    [SerializeField] private float _cellSize = 4f;
+    
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private Transform _originPosition;
     [SerializeField] private Camera cameraForBuildings;
@@ -23,16 +28,18 @@ public class GridBuildingSystem : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-
-        int gridWidth = 10;
-        int gridHeight = 10;
-        float cellSize = 10f;
-        grid = new Grid<GridObject>(10, 5, 4f, _originPosition.position,
+        
+        grid = new Grid<GridObject>(_width, _height, _cellSize, _originPosition.position,
             (Grid<GridObject> g, int x, int y) => new GridObject(g, x, y), textHandler, showGridText);
 
         placedObjectTypeSO = null;
         if (cameraForBuildings == null)
             cameraForBuildings = Camera.main;
+    }
+
+    private void Start()
+    {
+        BuildingHandler.Instance.OnBuildingSelected += OnBuildingSelected;
     }
 
     public class GridObject
@@ -148,25 +155,7 @@ public class GridBuildingSystem : MonoBehaviour
             Debug.Log(dir);
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            placedObjectTypeSO = placedObjectSOList[0];
-            RefreshSelectedObjectType();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            placedObjectTypeSO = placedObjectSOList[1];
-            RefreshSelectedObjectType();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            placedObjectTypeSO = placedObjectSOList[2];
-            RefreshSelectedObjectType();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha0))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             DeselectObjectType();
         }
@@ -178,6 +167,25 @@ public class GridBuildingSystem : MonoBehaviour
         }
     }
 
+    private void OnBuildingSelected(BuildingType buildingType)
+    {
+        switch (buildingType)
+        {
+            case BuildingType.House:
+                placedObjectTypeSO = placedObjectSOList[0];
+                RefreshSelectedObjectType();
+                break;
+            case BuildingType.LongHouse:
+                placedObjectTypeSO = placedObjectSOList[1];
+                RefreshSelectedObjectType();
+                break;
+            case BuildingType.Warehouse:
+                placedObjectTypeSO = placedObjectSOList[2];
+                RefreshSelectedObjectType();
+                break;
+        }
+    }
+    
     private void DeselectObjectType()
     {
         placedObjectTypeSO = null;

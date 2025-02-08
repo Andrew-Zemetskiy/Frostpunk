@@ -4,3 +4,10 @@ public enum ResourceType
     Wood,
     Steel
 }
+
+public enum BuildingType
+{
+    House,
+    LongHouse,
+    Warehouse
+}
