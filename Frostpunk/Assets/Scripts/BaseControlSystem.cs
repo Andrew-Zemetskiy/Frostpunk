@@ -52,14 +52,14 @@ public class BaseControlSystem : MonoBehaviour
 
     private void OnEnable()
     {
-        _inputSystem.Player.Move.performed += OnMouseClick;
+        _inputSystem.Player.LMB.performed += OnMouseClick;
         _inputSystem.Enable();
     }
 
     private void OnDisable()
     {
         _inputSystem.Disable();
-        _inputSystem.Player.Move.performed -= OnMouseClick;
+        _inputSystem.Player.LMB.performed -= OnMouseClick;
     }
 
     private void OnMouseClick(InputAction.CallbackContext obj)
