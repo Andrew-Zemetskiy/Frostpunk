@@ -8,6 +8,8 @@ public class BuildingHandler : UIHandlerBase, IInit
     public static BuildingHandler Instance;
 
     [SerializeField] private List<BuildingCost> _buildingsCost;
+
+    private int selectedBuilding;
     
     public event Action<BuildingType> OnBuildingSelected; 
     
@@ -19,37 +21,49 @@ public class BuildingHandler : UIHandlerBase, IInit
     public override void Init()
     {
         InGameTimeManager.Instance.OnTimeStep += CheckCostRequirement;
+        GridBuildingSystem.Instance.OnObjectPlaced += PayForBuilding;
+    }
+
+    private void OnDisable()
+    {
+        InGameTimeManager.Instance.OnTimeStep -= CheckCostRequirement;
+        GridBuildingSystem.Instance.OnObjectPlaced -= PayForBuilding;
     }
 
     public void SelectBuildingTypeByIndex(int index)
     {
         if (_buildingsCost.Count <= index) return;
 
+        selectedBuilding = index;
+        
         BuildingType[] values = (BuildingType[])Enum.GetValues(typeof(BuildingType));
         if (values.Length <= index) return;
         OnBuildingSelected?.Invoke(values[index]);
     }
 
-    private void CheckCostRequirement()
+    private void PayForBuilding()
     {
-        float coal, wood, steel;
-        coal = ResourceHandler.Instance.CoalAmount;
-        wood = ResourceHandler.Instance.WoodAmount;
-        steel = ResourceHandler.Instance.SteelAmount;
-
-        bool isFit;
-        foreach (var building in _buildingsCost)
-        {
-            isFit = true;
-            if (building.coal > coal || building.wood > wood || building.steel > steel)
-            {
-                isFit = false;
-            }
-            
-            building.button.interactable = isFit;
-        }
+        ResourceHandler.Instance.CoalAmount -= _buildingsCost[selectedBuilding].coal;
+        ResourceHandler.Instance.WoodAmount -= _buildingsCost[selectedBuilding].wood;
+        ResourceHandler.Instance.SteelAmount -= _buildingsCost[selectedBuilding].steel;
     }
     
+    private void CheckCostRequirement()
+    {
+        float coal = ResourceHandler.Instance.CoalAmount;
+        float wood = ResourceHandler.Instance.WoodAmount;
+        float steel = ResourceHandler.Instance.SteelAmount;
+        
+        foreach (var building in _buildingsCost)
+        {
+            if (building.coal > coal || building.wood > wood || building.steel > steel)
+            {
+                building.button.interactable = false;
+                continue;
+            }
+            building.button.interactable = true;
+        }
+    }
 }
 
 [System.Serializable]

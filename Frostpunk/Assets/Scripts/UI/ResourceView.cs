@@ -36,8 +36,8 @@ public class ResourceView : UIHandlerBase, IInit
 
     private void UpdateData()
     {
-        _coalAmountText.text = Mathf.Ceil(ResourceHandler.Instance.CoalAmount).ToString();
-        _woodAmountText.text = Mathf.Ceil(ResourceHandler.Instance.WoodAmount).ToString();
-        _steelAmountText.text = Mathf.Ceil(ResourceHandler.Instance.SteelAmount).ToString();
+        _coalAmountText.text = Mathf.Floor(ResourceHandler.Instance.CoalAmount).ToString();
+        _woodAmountText.text = Mathf.Floor(ResourceHandler.Instance.WoodAmount).ToString();
+        _steelAmountText.text = Mathf.Floor(ResourceHandler.Instance.SteelAmount).ToString();
     }
 }

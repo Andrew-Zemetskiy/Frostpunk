@@ -14,16 +14,19 @@ public class ResourceHandler : MonoBehaviour
     public float CoalAmount
     {
         get { return _coalAmount; }
+        set { _coalAmount = value; }
     }
 
     public float WoodAmount
     {
         get { return _woodAmount; }
+        set { _woodAmount = value; }
     }
 
     public float SteelAmount
     {
         get { return _steelAmount; }
+        set { _steelAmount = value; }
     }
     
     private void Awake()
